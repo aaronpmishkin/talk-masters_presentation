@@ -1,0 +1,87 @@
+\documentclass[mathserif,notheorems]{beamer}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[scale=2]{ccicons}
+\usepackage{appendixnumberbeamer}
+\usepackage{booktabs}
+\usepackage[toc,page]{appendix}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{adjustbox, lipsum}
+\usepackage{bbm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[sort,numbers]{natbib}
+
+% absolute positioning
+\usepackage[absolute,overlay]{textpos}
+
+%% source for images.
+\newcommand{\source}[1]{{\let\thefootnote\relax\footnote{{\tiny #1}}}}
+
+\pdfstringdefDisableCommands{%
+  \def\\{}%
+  \def\texttt#1{<#1>}%
+}
+
+\input{macros/math}
+\usepackage{simplebeam}
+
+\title{}
+\author{}
+\institute{}
+\date{}
+
+
+\begin{document}
+    %% TODO: Should write custom title template instead of this slide.
+    \setbeamercolor{background canvas}{bg=lightcyan}
+        \begin{frame}
+        \vspace{1em}
+        \begin{center}
+            {\Large  \vspace{1em}} %% title
+
+
+            {\large  \vspace{1em} } %% subtitle
+
+            {\large Aaron Mishkin, \\ \texttt{amishkin@cs.ubc.ca} } %% author
+        \end{center}
+
+        \vspace{2em}
+
+        %% collaborators:
+        \begin{figure}
+            \centering
+
+        \end{figure}
+
+    \end{frame}
+    \setbeamercolor{background canvas}{bg=white}
+
+    %% main content starts %%
+
+    \begin{frame}{}
+
+    \end{frame}
+
+    %% main content ends %%
+
+    %% end slide
+    \setbeamercolor{background canvas}{bg=lightcyan}
+
+    \begin{frame}{}
+        \begin{center}
+        \huge Thanks for Listening!
+        \end{center}
+    \end{frame}
+    \setbeamercolor{background canvas}{bg=white}
+
+    %% bibliography
+    \begin{frame}[allowframebreaks]{References}
+        \bibliographystyle{plainnat}
+        \bibliography{refs}
+    \end{frame}
+
+
+\end{document}
