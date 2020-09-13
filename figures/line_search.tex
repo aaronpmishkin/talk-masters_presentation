@@ -1,7 +1,7 @@
 %! TEX root = ../../main.tex
 %% Illustration of line-search with and without minimizer interpolation. 
 
-\begin{tikzpicture}[scale=1,
+\begin{tikzpicture}[scale=0.8,
       declare function={
         objective(\x)=      (\x<=-1) * (2*\x*\x + 6*\x + 4)    +
         and(\x>-1, \x<=1) * (\x + 5 - pow(\x,3) - 5*\x*\x) / 4 +
@@ -30,7 +30,7 @@
     \node[label={90:No Interpolation}] at (axis cs:0.5,-7.5) {};
     \end{axis}
 \end{tikzpicture}%
-\begin{tikzpicture}[scale=1,
+\begin{tikzpicture}[scale=0.8,
       declare function={
         objective(\x)=      (\x<=-1) * (2*\x*\x + 6*\x + 4)    +
         and(\x>-1, \x<=1) * (\x + 5 - pow(\x,3) - 5*\x*\x) / 4 +

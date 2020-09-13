@@ -36,6 +36,7 @@
 \makeatother
 
 \input{macros/math}
+\input{procedure}
 \usepackage{simplebeam}
 
 %% tikz
@@ -144,11 +145,10 @@
         
         \vspace{2ex}
 
-        \textbf{Part 3: First-Order Methods under Interpolation}
+        \textbf{Part 3: Stochastic Gradient Descent}
         \begin{itemize}
             \item SGD with a fixed step-size.
             \item Parameter-free SGD using an Armijo line-search.
-            \item Accelerating stochastic gradient descent. 
         \end{itemize}
     \end{frame}
 
@@ -575,27 +575,228 @@
 
     \setbeamercolor{background canvas}{bg=lightcyan}
 
+    \begin{frame}
+        
+       \begin{center}
+          \huge Pause 
+       \end{center} 
+    \end{frame}
+
     %% stochastic gradient descent (sgd) 
     
     \begin{frame}
        \begin{center}
-          \huge Part 3: Stochastic Gradient Descent 
+          \huge Part 3: Stochastic Gradient Descent\\
        \end{center} 
     \end{frame}
     
     \setbeamercolor{background canvas}{bg=white}
 
-    \begin{frame}{SGD}
+    \begin{frame}{Fixed Step-size SGD: Procedure}
        
+        \begin{figure}[t]
+        \begin{procedure}{Stochastic Gradient Descent}
+        \item Choose an initial point \( \w_0 \in \R^d \).
+            \vspace{2ex}
+        \item For each iteration \( k \geq 0 \):
+            \begin{enumerate}
+                \item Query \oracle{} for \( \grad(\wk, \zk) \).
+                    \vspace{1ex}
+                \item Update input as\vspace{-1ex}%
+                    \[ \wkk = \wk - \eta \grad(\wk, \zk). \]
+            \end{enumerate}
+        \end{procedure}
+        \end{figure}
+
     \end{frame}
 
-    \begin{frame}{Line Search}
-       SGD 
+    \begin{frame}{Fixed Step-size SGD:\ Convergence}
+        \vspace{-2ex}
+        \begin{minipage}[t]{0.82\textwidth}
+        \vspace{-1.45ex} 
+        \begin{restatable}[Convex + Weak Growth]{theorem}{wgcConvex}~\label{thm:wgc-convex}
+            Assume \( f \) is convex, \( L \)-smooth and \( \rbr{f, \oracle{}} \) satisfies weak growth. 
+            Then SGD with \( \eta = \frac{1}{2 \wgc L} \) converges as
+            \[ \E\sbr{\f(\bar \w_K)} - f(\wopt) \leq \frac{2 \alpha L}{K} \norm{\w_0 - \wopt}^2. \]
+        \end{restatable}
+
+        \begin{restatable}[Convex + Interpolation]{theorem}{wgcConvexIndSmooth}~\label{thm:wgc-convex-ind-smooth}
+            Assume \( f \) is convex, \( L \)-smooth and \oracle{} is \( \Lmax \) individually-smooth. 
+            Assume minimizer interpolation holds. 
+            Then SGD with \( \eta = \frac{1}{\Lmax} \) converges as
+            \[ \E\sbr{f(\bar w_K)} - f(\wopt) \leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.   \]
+        \end{restatable}
+
+        \end{minipage} 
+        \begin{minipage}[t]{0.15\textwidth}
+            \begin{figure}[t]
+                \centering
+                \includegraphics[width=0.8\textwidth]{collaborators/sharan}
+
+                \vspace{0.5ex}
+
+                \includegraphics[width=0.8\textwidth]{collaborators/fred}
+            \end{figure} 
+        \end{minipage}
     \end{frame}
 
-    \begin{frame}{Acceleration}
-       SGD 
+    \begin{frame}{Fixed Step-size SGD: Comments}
+       \vspace{-2ex}
+       \begin{align*}
+           \textbf{Weak Growth}:  \quad \E\sbr{\f(\bar \w_K)} - f(\wopt) &\leq \frac{2 \alpha L}{K} \norm{\w_0 - \wopt}^2.
+            \intertext{\hspace{13em} \Large v.s.}
+            \textbf{Interpolation}: \quad \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.\\
+       \end{align*} 
+
+        \textbf{Comments:}
+        \begin{itemize}
+            \item By minimizer interpolation and individual-smoothness, 
+                \[ \alpha \leq \frac{\Lmax}{L}. \]
+            \item So, the second rate is better than the first in the \textbf{worst-case}!  
+            \item If \( \Lmax = L \), then the second rate is tight deterministic GD!
+        \end{itemize}
     \end{frame}
+
+    \begin{frame}{SGD with Armijo Line-search: Procedure}
+        
+        \begin{figure}[t]
+            \begin{procedure}{SGD with Armijo Line-Search}
+            \item Choose an initial point \( \w_0 \in \R^d \).
+                \vspace{2ex}
+            \item For each iteration \( k \):
+                \begin{enumerate}
+                    \item Query \oracle{} for \( f(\wk, \zk), \: \grad(\wk, \zk) \). 
+                        \vspace{1ex}
+                    \item Set \( \etak =  \etamax \), and \[ \wkk \gets \wk - \etak \grad(\wk, \zk). \]
+                    \item Backtrack until
+                        \[  \hspace{-1em} f(\wkk, \zk) \leq f(\wk, \zk) - c \cdot \etak \norm{\grad(\wk, \zk)}^2. \]
+                \end{enumerate}
+            \end{procedure}
+        \end{figure}
+
+    \end{frame}
+
+    \begin{frame}{SGD with Armijo Line-search: Visualization}
+        \begin{figure}[]
+            \centering
+            \input{figures/line_search}
+        \end{figure} 
+    \end{frame}
+
+    \begin{frame}{SGD with Armijo Line-search: Key Lemma}
+        \vspace{-2ex}
+        \begin{minipage}[t]{0.82\textwidth}
+        \vspace{-1.45ex} 
+            \begin{restatable}[Step-size Bound]{lemma}{stepSizeBound}~\label{lemma:step-size-bound}
+                Assume \( f \) is \( L \)-smooth and \oracle{} is \( \Lmax \) individually- smooth.
+                Assume minimizer interpolation holds.\\
+
+                Then the \textbf{maximal} step-size satisfying the stochastic Armijo condition satisfies the following: 
+                \[ \frac{2 (1-c)}{\Lmax} \leq \etak \leq \frac{f(\wk, \zk) - f(\wopt, \zk)}{c \norm{\grad(\wk, \zk)}^2}. \]
+            \end{restatable}
+       \end{minipage} 
+       \begin{minipage}[t]{0.15\textwidth}
+            \begin{figure}[t]
+                \centering
+                \includegraphics[width=0.8\textwidth]{collaborators/sharan}
+
+                \vspace{0.4ex}
+                \includegraphics[width=0.8\textwidth]{collaborators/issam}
+
+                \vspace{0.4ex}
+                \includegraphics[width=0.8\textwidth]{collaborators/gauthier}
+
+                \vspace{0.4ex}
+                \includegraphics[width=0.8\textwidth]{collaborators/mark}
+
+                \vspace{0.4ex}
+                \includegraphics[width=0.8\textwidth]{collaborators/simon}
+            \end{figure} 
+       \end{minipage}
+    \end{frame}
+
+    \begin{frame}{SGD with Armijo Line-Search: Lemma Geometry}
+        \begin{figure}[]
+            \centering
+            \input{figures/step_size_bound}
+        \end{figure} 
+
+        \[  \frac{2 (1-c)}{\Lmax} \leq \etak \leq \frac{f(\wk, \zk) - f(\wopt, \zk)}{c \norm{\grad(\wk, \zk)}^2}. \] 
+    \end{frame}
+
+    \begin{frame}{SGD with Armijo Line-search: Convergence}
+        \vspace{-2ex}
+        \begin{minipage}[t]{0.82\textwidth}
+            \vspace{-1.45ex} 
+            \begin{restatable}[Convex + Interpolation]{theorem}{convexLineSearch}~\label{thm:convex-line-search}
+                Assume \( f \) is convex, \( L \)-smooth and \( \oracle{} \) is \( \Lmax \) individually-smooth.
+                Assume minimizer interpolation holds and \( \f(\cdot, \zk) \) is almost-surely convex for all \( k \).\\
+
+                Then SGD with the Armijo line-search and \( c = \half \) converges as 
+                \begin{align*}
+                    \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.
+                \end{align*} 
+            \end{restatable}
+        \end{minipage}
+        \begin{minipage}[t]{0.15\textwidth}
+            \begin{figure}
+                    \centering
+                    \includegraphics[width=0.8\textwidth]{collaborators/sharan}
+
+                    \vspace{0.5ex}
+
+                    \includegraphics[width=0.8\textwidth]{collaborators/fred}
+            \end{figure}
+        \end{minipage}
+    \end{frame}
+
+    \begin{frame}{SGD with Armijo Line-search: Comments}
+        \vspace{-2ex}
+        \begin{align*}
+            \textbf{Constant Step-size}: \quad \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.
+            \intertext{\hspace{13em} \Large v.s.}
+            \textbf{Armijo Line-search}: \quad \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.\\
+        \end{align*}
+
+        \textbf{Comments}:
+        \begin{itemize}
+            \item SGD with the Armijo line-search is just as fast as SGD with the best constant step-size! 
+            \item SGD with the Armijo line-search is (nearly) parameter-free and recovers the deterministic rate when \( \Lmax = L \). 
+        \end{itemize}
+    \end{frame}
+
+
+    \setbeamercolor{background canvas}{bg=lightcyan}
+    \begin{frame}
+        \begin{center}
+        \huge Pause
+        \end{center}
+    \end{frame}
+   
+    \setbeamercolor{background canvas}{bg=white}
+
+    \begin{frame}{Recap}
+       \Large 
+       \begin{center}
+         \Huge Takeaways.
+
+         \vspace{-1ex}
+         \rule{0.66\textwidth}{1px}
+         \vspace{1ex}
+       \end{center}
+
+        \begin{itemize}
+            \item \textbf{Interpolation}: the oracle model is a natural framework for interpolation in optimization. 
+
+                \vspace{2ex}
+            \item \textbf{Growth Conditions}: ``smooth'' oracles satisfying interpolation are well-behaved globally. 
+
+                \vspace{2ex}
+            \item \textbf{SGD}: line-search methods lead to fast, parameter-free optimization under interpolation. 
+        \end{itemize}
+    \end{frame}
+    
+    \setbeamercolor{background canvas}{bg=white}
 
     %% end slide
     \setbeamercolor{background canvas}{bg=lightcyan}
