@@ -25,8 +25,37 @@
   \def\texttt#1{<#1>}%
 }
 
+\makeatletter
+\let\save@measuring@true\measuring@true
+\def\measuring@true{%
+  \save@measuring@true
+  \def\beamer@sortzero##1{\beamer@ifnextcharospec{\beamer@sortzeroread{##1}}{}}%
+  \def\beamer@sortzeroread##1<##2>{}%
+  \def\beamer@finalnospec{}%
+}
+\makeatother
+
 \input{macros/math}
 \usepackage{simplebeam}
+
+%% tikz
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{patterns}
+%% pgf and tikz options.
+\pgfplotsset{
+    compat=1.5.1,
+    oracle/.style={color=red, style=dashed, line width=1.5pt},
+    bound/.style={color=blue, style=solid, line width=1.5pt},
+    objective/.style={color=black, style=solid, line width=1.5pt},
+}
+
+\tikzset{
+    font={\fontsize{18pt}{12}\selectfont},
+}
+
 
 \title{}
 \author{}
@@ -47,8 +76,7 @@
 
         \vspace{1ex}
 
-        %% collaborators:
-        \begin{figure}
+       \begin{figure}
             \centering
             \includegraphics[width=0.18\textwidth]{collaborators/sharan}
             \includegraphics[width=0.18\textwidth]{collaborators/issam}
@@ -63,21 +91,42 @@
             \includegraphics[width=0.18\textwidth]{collaborators/wilder}
             \includegraphics[width=0.18\textwidth]{collaborators/joey}
         \end{figure}
-
     \end{frame}
    
     \setbeamercolor{background canvas}{bg=white}
-    
-    \begin{frame}{Motivation: Model Fitting}
-       \begin{center}
-         Training Bayesian neural networks is dangerous work! 
-       \end{center}
+  
+    \begin{frame}{Training neural networks is dangerous work!}
        
        \begin{figure}
             \centering
             \includegraphics[width=0.45\textwidth]{collaborators/helmet1} 
             \includegraphics[width=0.45\textwidth]{collaborators/helmet2} 
        \end{figure} 
+    \end{frame}
+    
+    \begin{frame}{Talk Roadmap}
+        \textbf{Part 1: Interpolation}
+        \begin{itemize}
+            \item Assumptions and oracle model of stochastic optimization.
+            \item Formal definitions of interpolation.
+        \end{itemize}
+
+        \vspace{2ex}
+        
+        \textbf{Part 2: Growth Conditions}
+        \begin{itemize}
+            \item The strong and weak growth conditions. 
+            \item Connections between interpolation and strong/weak growth.
+        \end{itemize}
+        
+        \vspace{2ex}
+
+        \textbf{Part 3: First-Order Methods under Interpolation}
+        \begin{itemize}
+            \item Stochastic gradient descent (SGD) with a fixed step-size.
+            \item Parameter-free SGD using an Armijo line-search.
+            \item Accelerating stochastic gradient descent. 
+        \end{itemize}
     \end{frame}
 
     \begin{frame}{Motivation: Model Fitting in ML}
@@ -151,7 +200,66 @@
 
     \end{frame}
 
-    \begin{frame}{Better Optimization via Better Models}
+
+    \begin{frame}{Motivation: Challenges in Optimization for ML}
+
+        \textbf{Stochastic gradient methods} are the most popular algorithms for fitting ML models,
+        \begin{align*}
+            \textbf{SGD:} \quad w_{k + 1} = w_k - \eta_k \nabla f_i \, (w_k). \\
+        \end{align*}
+
+        % SGD is scalable and converges if $\eta_k$ decreases sufficiently slowly.\vspace{1em}
+
+        But practitioners face major challenges with \vspace{0.5em}
+        \begin{itemize}
+            \item \textcolor{red}{\textbf{Speed}: step-size/averaging controls convergence rate.}
+            \item \textcolor{red}{\textbf{Stability}: hyper-parameters must be tuned carefully.}
+            \item \textbf{Generalization}: optimizers encode statistical tradeoffs.
+        \end{itemize}
+        \vspace{1em}
+
+    \end{frame}
+
+    \begin{frame}{Motivation: Trends on CIFAR-10} 
+        \begin{center}
+            \Large Test Accuracy: \textbf{CIFAR-10}
+        \end{center}
+
+        \begin{figure}[]
+            \centering
+            \includegraphics[width=\linewidth]{figures/Cifar10}
+        \end{figure} 
+
+        \source{https://paperswithcode.com/sota/image-classification-on-cifar-10}
+    \end{frame}
+
+    \begin{frame}{Motivation: Trends on CIFAR-100} 
+        \begin{center}
+            \Large Test Accuracy: \textbf{CIFAR-100}
+        \end{center}
+
+        \begin{figure}[]
+            \centering
+            \includegraphics[width=\linewidth]{figures/Cifar100}
+        \end{figure} 
+
+        \source{https://paperswithcode.com/sota/image-classification-on-cifar-100}
+    \end{frame}
+
+    \begin{frame}{Motivation: Trends on ImageNet} 
+        \begin{center}
+            \Large Test Accuracy: \textbf{ImageNet}
+        \end{center}
+
+        \begin{figure}[]
+            \centering
+            \includegraphics[width=\linewidth]{figures/ImageNet}
+        \end{figure} 
+
+        \source{https://paperswithcode.com/sota/image-classification-on-imagenet}
+    \end{frame}
+
+    \begin{frame}{Motivation: Better Optimization via Better Models}
 
         \begin{figure}
             \centering
@@ -162,30 +270,267 @@
         \vspace{0.2em}
 
         \begin{center}
-            \large \textbf{Idea}: exploit over-parameterization for better optimization.\vspace{0.25em}
+            \large \textbf{Idea}: exploit ``over-parameterization'' for better optimization.\vspace{0.25em}
         \end{center}
 
     \end{frame}
 
+    \setbeamercolor{background canvas}{bg=lightcyan}
 
-    \begin{frame}{Interpolation}
-        
+    %% interpolation
+
+    \begin{frame}
+       \begin{center}
+          \huge Part 1: Interpolation 
+       \end{center} 
     \end{frame}
 
-    \begin{frame}{Growth Conditions}
+    \setbeamercolor{background canvas}{bg=white}
+
+    \begin{frame}{Interpolation: Assumptions}
+        \begin{center}
+            \Large 
+            \textbf{Goal}: Minimize \( f : \R^d \into \R\), where 
+        \end{center}
+       
+        \vspace{3ex}
         
+        \begin{itemize}
+            \item \( f \) is \textbf{lower-bounded}: \( \exists \, \wopt \in \R^d \) such that
+                \begin{align*}
+                    f(\wopt) &\leq f(w) \hspace{1.7em} \tag*{\(\forall \w \in \R^d \), } 
+                \end{align*}
+
+            \item \( f \) is L-\textbf{smooth}: \( \w \mapsto \grad(\w) \) is \( L \)-Lipschitz, 
+                \begin{align*}
+                    \norm{\grad(\w) - \grad(u)}_2 &\leq L \norm{\w - u}_2 \tag*{\(\forall \w, u \in \R^d \),} 
+                \end{align*}
+
+            \item (Optional) \( f \) is \( \mu \)-\textbf{strongly-convex}: \( \exists \, \mu \geq 0 \) such that, 
+                \begin{align*}
+                   f(u) \geq f(\w) + \abr{\grad(\w), u - \w} + \frac{\mu}{2} \norm{u - \w}^2_2 \tag*{\( \forall \w, u \in \R^d \).}
+                \end{align*}
+        \end{itemize}
+     
     \end{frame}
 
-    \begin{frame}{Stochastic Gradient Descent}
+    \begin{frame}{Interpolation: Stochastic First-Order Oracles}
+
+        \textbf{Classic}:
+        \begin{enumerate}
+            \item At each iteration \( k \), query oracle \oracle{} for stochastic estimates 
+                \[ f(\wk, \zk) \quad \text{and} \quad \grad(\wk, \zk). \] 
+            \item \( f(\wk, \cdot) \) is a deterministic function of random variable \( \zk \). 
+                \vspace{1ex}
+            \item \textcolor{red}{\oracle{} is \textbf{unbiased}}, meaning 
+            \[ \Ek\sbr{f(\wk, \zk)} = f(\wk) \quad \text{and} \quad \Ek\sbr{\grad(\wk, \zk)} = \grad(\wk). \]% 
+        \end{enumerate}%
+        \pause%
+        \textbf{New}:
+        \begin{enumerate}
+            \item \textcolor{blue}{\oracle{} is \textbf{individually-smooth}}, meaning \( f(\cdot, \zk) \) is \( \Lmax \)-smooth, 
+                \begin{align*}
+                    \norm{\grad(\w, \zk) - \grad(u, \zk)}_2 &\leq \Lmax \norm{\w - u}_2 \tag*{\(\forall \w, u \in \R^d \),} 
+                \end{align*}
+                almost surely.
+        \end{enumerate}
+
+    \end{frame}
+
+    \begin{frame}{Interpolation: SFOs and Least Squares}
+        \vspace{-1ex}
+
+        \[ \textbf{Least Squares}: \wopt \in \argmin \frac{1}{2n} \sum_{i=1}^n \rbr{\abr{w, x_i} - y_i}^2. \]
         
+        \vspace{2ex} 
+        
+        The \textbf{sub-sampling} oracle sets \( \zk \sim \text{Uniform}(1, \ldots, n) \) and returns 
+        \[ f(\w, \zk) =  \half \rbr{\abr{w, x_i} - y_i}^2 \quad \text{and} \quad \grad(\wk, \zk) = \rbr{\abr{\w, x_i} - y_i} x_i. \]
+
+        \pause 
+        \rule{\textwidth}{0.4pt}
+        Observations: 
+        \begin{itemize}
+            \item \textcolor{red}{\oracle{} is \textbf{unbiased}.} 
+            \item \textcolor{blue}{\oracle{} is \( \Lmax = \max_{i} \norm{x_i}^2_2 \) \textbf{individually-smooth}} since 
+                    \[ f_{i}(\w) = \half \rbr{\abr{w, x_{i}} - y_{i}}^2, \]
+                    is \( \norm{x_{i}}_2^2 \)-smooth for each \( i \in [n] \).
+        \end{itemize}
+
+    \end{frame}
+
+    \begin{frame}{Interpolation: Defining Interpolation}
+        
+        \begin{restatable}[Interpolation: Minimizers]{definition}{interpolationMinima}\label{def:interpolation-minima}
+            The pair \( (f, \oracle{}) \) satisfies minimizer interpolation if for all \( \z \in \calZ \),
+            \[ f(\w') \leq f(\w) \; \forall \w \in \R^d \implies f(\w', \z) \leq f(\w, \z) \; \forall \w \in \R^d.  \]
+        \end{restatable}
+        \pause
+        \begin{restatable}[Interpolation: Stationary Points]{definition}{interpolationGradients}\label{def:interpolation-gradients}
+            The pair \( (f, \oracle{}) \) satisfies stationary-point interpolation if for all \( \z \in \calZ \),
+            \[ \grad(\w') = 0 \implies \grad(\w', \z) = 0. \]
+        \end{restatable}
+        \pause
+        \begin{restatable}[Interpolation: Mixed]{definition}{interpolationMixed}\label{def:interpolation-mixed}
+            The pair \( (f, \oracle{}) \) satisfies mixed interpolation if for all \( \z \in \calZ \),
+            \[ f(\w') \leq f(\w) \; \forall \w \in \R^d \implies \grad(\w', \z) = 0. \]
+        \end{restatable}
+
+    \end{frame}
+
+    \begin{frame}{Interpolation: Minimizer}
+        \begin{figure}
+            \centering 
+            \input{figures/minimizer} 
+        \end{figure}
+        
+        \interpolationMinima*
+
+    \end{frame}
+
+
+    \begin{frame}{Interpolation: Stationary-Point}
+        \begin{figure}
+           \centering 
+            \input{figures/stationary_point} 
+        \end{figure}
+        
+        \interpolationGradients*
+
+    \end{frame}
+
+    \begin{frame}{Interpolation: Mixed}
+        \begin{figure}
+           \centering 
+            \input{figures/mixed} 
+        \end{figure}
+
+        \interpolationMixed*
+
+    \end{frame}
+
+    \begin{frame}{Interpolation: Relationships}
+
+        \begin{restatable}[Interpolation Relationships]{lemma}{interpRelationships}
+            Let \( \rbr{f, \oracle{}} \) be arbitrary. 
+            Then only the following relationships hold: 
+            \begin{align*}
+                \text{Minimizer Interpolation} &\implies \text{Mixed Interpolation} \\
+                                                                                       & \text{and} &\\
+                \text{Stationary-Point Interpolation} &\implies \text{Mixed Interpolation}.
+            \end{align*}
+            However, if \( f \) and \( f(\cdot, \zk) \) are invex (almost surely) for all \( k \), then the three definitions are equivalent. 
+        \end{restatable}
+        
+    \end{frame}
+  
+    %% growth conditions
+
+    \setbeamercolor{background canvas}{bg=lightcyan}
+
+    \begin{frame}
+       \begin{center}
+          \huge Pause 
+       \end{center} 
+    \end{frame}
+
+
+    \begin{frame}
+       \begin{center}
+          \huge Part 2: Growth Conditions 
+       \end{center} 
+    \end{frame}
+
+    \setbeamercolor{background canvas}{bg=white}
+    
+    \begin{frame}{Growth Conditions: Iteration Complexity}
+        \Large 
+        
+        \textbf{Question}: for how many iterations do we need to run SGD to obain 
+        \[ E\sbr{f(\wk) - f(\wopt)} \leq \epsilon \] 
+        if minimizer interpolation holds?
+
+       \vspace{4ex}
+       \pause 
+       \textbf{Two Approaches}: 
+       \begin{enumerate}
+           \item Use interpolation in a direct analysis of SGD. 
+           \item Relate interpolation to ``nice'' properties of \( \oracle{} \). 
+       \end{enumerate}
+
+    \end{frame}
+
+    \begin{frame}{Growth Conditions: Well-behaved Oracles}
+        
+        \mbox{\large There are many possible regularity assumptions on \oracle{}.} 
+
+        \begin{align*} 
+            \textbf{Bounded Gradients}:& \quad  \Ek\sbr{\norm{\grad(\w, \zk)}} \leq \textcolor{red}{\sigma^2}, \\ 
+           \intertext{\hspace{3.5em} \small\textbullet{} Proposed by Robbins and Monro in their analysis of SGD. }
+           \textbf{Bounded Variance}:& \quad \E_{\zk} \sbr{\norm{\grad(\w, \zk)}^2} \leq \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}, \\
+           \intertext{\hspace{3.5em} \small \textbullet{} Commonly used in the stochastic approximation setting.}
+           \textbf{Strong Growth + Noise}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}.
+           \intertext{\hspace{3.5em} \small \textbullet{} Satisfied when \oracle{} is individually-smooth. }
+       \end{align*} 
+
+    \end{frame}
+
+    \begin{frame}{Growth Conditions: Strong and Weak Growth}
+
+        \mbox{\large We obtain the strong and weak growth conditions as follows: } 
+
+        \begin{align*} 
+            \textbf{Strong Growth + Noise}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}. \\
+           \intertext{\hspace{3.5em} \small \textbullet{} Does not imply interpolation. }
+           \pause
+            \textbf{Strong Growth Condition}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2}.\\
+            \intertext{\hspace{3.5em} \small \textbullet{} Implies \textbf{stationary-point} interpolation. }
+           \pause
+            \textbf{Weak Growth Condition}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \alpha \, \textcolor{purple}{\rbr{f(\w) - f(\wopt)}}. 
+            \intertext{\hspace{3.5em} \small \textbullet{} Implies \textbf{mixed} interpolation. }
+       \end{align*} 
+
+    \end{frame}
+
+    \begin{frame}{Growth Conditions: Interpolation + Smoothness}
+        
+        \begin{restatable}[Interpolation and Weak Growth]{lemma}{interpToWGC}~\label{lemma:interpolation-to-wgc}
+            Assume \( f \) is \( L \)-smooth and \oracle{} is \( \Lmax \) individually-smooth. 
+            If minimizer interpolation holds, then weak growth also holds with
+            \[ \wgc \leq \frac{L_{\text{max}}}{L}. \]
+        \end{restatable}
+       
+
+        \begin{restatable}[Interpolation and Strong Growth]{lemma}{interpToSGC}~\label{lemma:interpolation-to-sgc}
+            Assume \( f \) is \( L \)-smooth and \( \mu \) strongly-convex and \oracle{} is \( \Lmax \) individually-smooth. 
+            If minimizer interpolation holds, then strong growth also holds with 
+            \[ \rho \leq \frac{L_{\text{max}}}{\mu}. \]
+        \end{restatable}
+
+    \end{frame}
+
+    \setbeamercolor{background canvas}{bg=lightcyan}
+
+    %% stochastic gradient descent (sgd) 
+    
+    \begin{frame}
+       \begin{center}
+          \huge Part 3: Stochastic Gradient Descent 
+       \end{center} 
     \end{frame}
     
+    \setbeamercolor{background canvas}{bg=white}
+
+    \begin{frame}{SGD}
+       
+    \end{frame}
+
     \begin{frame}{Line Search}
-        
+       SGD 
     \end{frame}
 
     \begin{frame}{Acceleration}
-        
+       SGD 
     \end{frame}
 
     %% end slide
@@ -199,12 +544,9 @@
 
     \setbeamercolor{background canvas}{bg=white}
 
+
     \begin{frame}{Acknowledgements}
-        I owe a great debt to my collaborators (left to right):
-        \begin{center}    
-            \href{https://vaswanis.github.io/}{Sharan Vaswani}, \href{https://issamlaradji.github.io/}{Issam Laradji}, \href{https://gauthiergidel.github.io/}{Gauthier Gidel}, \href{https://www.cs.ubc.ca/~schmidtm/}{Mark Schmidt}, \href{http://www.iro.umontreal.ca/~slacoste/}{Simon Lacoste-Julien}, \href{https://fkunstner.github.io/}{Frederik Kunstner}, \href{https://www.cs.ubc.ca/~mengxixi/}{Si Yi Meng}, \href{https://wilderlavington.github.io/}{Jonathan Lavington}, \href{https://joeyandbluewhale.github.io/}{Yihan Zhou}, and Betty Shea (not pictured). 
-        \end{center}
-        
+     
         \begin{figure}
             \centering
             \includegraphics[width=0.18\textwidth]{collaborators/sharan}
@@ -221,8 +563,10 @@
             \includegraphics[width=0.18\textwidth]{collaborators/joey}
         \end{figure}
 
-    \end{frame}
-
+        \textbf{Left to right}:
+            \href{https://vaswanis.github.io/}{Sharan Vaswani}, \href{https://issamlaradji.github.io/}{Issam Laradji}, \href{https://gauthiergidel.github.io/}{Gauthier Gidel}, \href{https://www.cs.ubc.ca/~schmidtm/}{Mark Schmidt}, \href{http://www.iro.umontreal.ca/~slacoste/}{Simon Lacoste-Julien}, \href{https://fkunstner.github.io/}{Frederik Kunstner}, \href{https://www.cs.ubc.ca/~mengxixi/}{Si Yi Meng}, \href{https://wilderlavington.github.io/}{Jonathan Lavington}, \href{https://joeyandbluewhale.github.io/}{Yihan Zhou}, and Betty Shea. 
+    
+        \end{frame}
     %% bibliography
     \begin{frame}[allowframebreaks]{References}
         \bibliographystyle{plainnat}
