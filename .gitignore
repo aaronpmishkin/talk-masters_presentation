@@ -55,3 +55,6 @@ main.pdf
 
 # tag files
 tags
+
+# system files
+.DS_Store

@@ -1,4 +1,4 @@
-\documentclass[mathserif,notheorems, hyperref={colorlinks, urlcolor=blue, linkcolor=blue}]{beamer}
+\documentclass[mathserif,notheorems, hyperref={colorlinks, citecolor=blue, urlcolor=blue, linkcolor=blue}]{beamer}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -12,7 +12,7 @@
 \usepackage{bbm}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage[sort,numbers]{natbib}
+\usepackage[sort]{natbib}
 
 % absolute positioning
 \usepackage[absolute,overlay]{textpos}
@@ -103,7 +103,30 @@
             \includegraphics[width=0.45\textwidth]{collaborators/helmet2} 
        \end{figure} 
     \end{frame}
-    
+   
+    \begin{frame}{Goal}
+        \Large 
+        
+        \textbf{Premise}: modern neural networks are extremely flexible and can exactly fit current training datasets. 
+       
+        \vspace{1ex} 
+
+        \textbf{Question}: what is the complexity of learning such models using stochastic gradient descent (SGD)?% 
+        
+        \vspace{1ex} 
+        \pause%
+        \rule{\textwidth}{0.4pt}% 
+        \vspace{1ex} 
+
+        \textbf{Main Works}:
+        \begin{itemize}
+            \item \citet*{schmidt2013fast}
+            \item \citet*{vaswani2019fast}
+            \item \citet*{vaswani2019painless}
+        \end{itemize}
+
+    \end{frame}
+
     \begin{frame}{Talk Roadmap}
         \textbf{Part 1: Interpolation}
         \begin{itemize}
@@ -123,7 +146,7 @@
 
         \textbf{Part 3: First-Order Methods under Interpolation}
         \begin{itemize}
-            \item Stochastic gradient descent (SGD) with a fixed step-size.
+            \item SGD with a fixed step-size.
             \item Parameter-free SGD using an Armijo line-search.
             \item Accelerating stochastic gradient descent. 
         \end{itemize}
@@ -335,6 +358,14 @@
                 almost surely.
         \end{enumerate}
 
+    \begin{textblock}{2.5}(0.3,11)
+        \includegraphics[width=0.4\textwidth]{collaborators/sharan}<2->
+
+        \vspace{0.5ex}
+
+        \includegraphics[width=0.4\textwidth]{collaborators/fred}<2->
+    \end{textblock}
+
     \end{frame}
 
     \begin{frame}{Interpolation: SFOs and Least Squares}
@@ -447,7 +478,7 @@
         \Large 
         
         \textbf{Question}: for how many iterations do we need to run SGD to obain 
-        \[ E\sbr{f(\wk) - f(\wopt)} \leq \epsilon \] 
+        \[ \E\sbr{f(\wk) - f(\wopt)} \leq \epsilon \] 
         if minimizer interpolation holds?
 
        \vspace{4ex}
@@ -465,11 +496,11 @@
         \mbox{\large There are many possible regularity assumptions on \oracle{}.} 
 
         \begin{align*} 
-            \textbf{Bounded Gradients}:& \quad  \Ek\sbr{\norm{\grad(\w, \zk)}} \leq \textcolor{red}{\sigma^2}, \\ 
+            \textbf{Bounded Gradients}:& \quad  \E\sbr{\norm{\grad(\w, \zk)}} \leq \textcolor{red}{\sigma^2}, \\ 
            \intertext{\hspace{3.5em} \small\textbullet{} Proposed by Robbins and Monro in their analysis of SGD. }
-           \textbf{Bounded Variance}:& \quad \E_{\zk} \sbr{\norm{\grad(\w, \zk)}^2} \leq \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}, \\
+           \textbf{Bounded Variance}:& \quad \E \sbr{\norm{\grad(\w, \zk)}^2} \leq \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}, \\
            \intertext{\hspace{3.5em} \small \textbullet{} Commonly used in the stochastic approximation setting.}
-           \textbf{Strong Growth + Noise}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}.
+           \textbf{Strong Growth+Noise}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}.
            \intertext{\hspace{3.5em} \small \textbullet{} Satisfied when \oracle{} is individually-smooth. }
        \end{align*} 
 
@@ -480,33 +511,66 @@
         \mbox{\large We obtain the strong and weak growth conditions as follows: } 
 
         \begin{align*} 
-            \textbf{Strong Growth + Noise}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}. \\
+            \textbf{Strong Growth+Noise}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}. \\
            \intertext{\hspace{3.5em} \small \textbullet{} Does not imply interpolation. }
            \pause
-            \textbf{Strong Growth Condition}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2}.\\
+            \textbf{Strong Growth}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2}.\\
             \intertext{\hspace{3.5em} \small \textbullet{} Implies \textbf{stationary-point} interpolation. }
            \pause
-            \textbf{Weak Growth Condition}:& \quad  \E_{\zk} \sbr{\norm{\grad(\w, \zk)}} \leq \alpha \, \textcolor{purple}{\rbr{f(\w) - f(\wopt)}}. 
+            \textbf{Weak Growth}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \alpha \, \textcolor{purple}{\rbr{f(\w) - f(\wopt)}}. 
             \intertext{\hspace{3.5em} \small \textbullet{} Implies \textbf{mixed} interpolation. }
        \end{align*} 
+
+    \begin{textblock}{2.5}(0.3,7)
+        \centering
+        \includegraphics[width=0.4\textwidth]{collaborators/mark}<2->
+        \includegraphics[width=0.4\textwidth]{collaborators/nicolas}<2->
+    \end{textblock}
+
+    \begin{textblock}{2.5}(0.3,10)
+        \centering
+        \includegraphics[width=0.4\textwidth]{collaborators/sharan}<3->
+        \includegraphics[width=0.4\textwidth]{collaborators/francis}<3->
+
+        \vspace{0.5ex}
+
+        \includegraphics[width=0.4\textwidth]{collaborators/mark}<3->
+    \end{textblock}
+
 
     \end{frame}
 
     \begin{frame}{Growth Conditions: Interpolation + Smoothness}
+    \begin{center}
+            
+        \vspace{-2ex}
+        \begin{minipage}[t]{0.82\textwidth}
+            \vspace{-1.45ex}
+            \begin{restatable}[Interpolation and Weak Growth]{lemma}{interpToWGC}~\label{lemma:interpolation-to-wgc}
+                Assume \( f \) is \( L \)-smooth and \oracle{} is \( \Lmax \) individually- smooth. 
+                If minimizer interpolation holds, then weak growth also holds with
+                \[ \wgc \leq \frac{L_{\text{max}}}{L}. \]
+            \end{restatable}
+           
+
+            \begin{restatable}[Interpolation and Strong Growth]{lemma}{interpToSGC}~\label{lemma:interpolation-to-sgc}
+                Assume \( f \) is \( L \)-smooth and \( \mu \) strongly-convex and \oracle{} is \( \Lmax \) individually-smooth. 
+                If minimizer interpolation holds, then strong growth also holds with 
+                \[ \rho \leq \frac{L_{\text{max}}}{\mu}. \]
+            \end{restatable}
+        \end{minipage}
+        \begin{minipage}[t]{0.15\textwidth}
+            \begin{figure}[t]
+                \centering
+                \includegraphics[width=0.8\textwidth]{collaborators/sharan}
+
+                \vspace{0.5ex}
+
+                \includegraphics[width=0.8\textwidth]{collaborators/fred}
+            \end{figure} 
+        \end{minipage}
         
-        \begin{restatable}[Interpolation and Weak Growth]{lemma}{interpToWGC}~\label{lemma:interpolation-to-wgc}
-            Assume \( f \) is \( L \)-smooth and \oracle{} is \( \Lmax \) individually-smooth. 
-            If minimizer interpolation holds, then weak growth also holds with
-            \[ \wgc \leq \frac{L_{\text{max}}}{L}. \]
-        \end{restatable}
-       
-
-        \begin{restatable}[Interpolation and Strong Growth]{lemma}{interpToSGC}~\label{lemma:interpolation-to-sgc}
-            Assume \( f \) is \( L \)-smooth and \( \mu \) strongly-convex and \oracle{} is \( \Lmax \) individually-smooth. 
-            If minimizer interpolation holds, then strong growth also holds with 
-            \[ \rho \leq \frac{L_{\text{max}}}{\mu}. \]
-        \end{restatable}
-
+    \end{center}
     \end{frame}
 
     \setbeamercolor{background canvas}{bg=lightcyan}
