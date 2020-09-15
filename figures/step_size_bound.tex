@@ -1,7 +1,7 @@
 %! TEX root = ../../main.tex
 %% Illustration of step-sizes bound from Armijo line-search. 
 
-\begin{tikzpicture}[scale=1,
+\begin{tikzpicture}[scale=0.9,
       declare function={
         objective(\x)=      (\x<=-1) * (2*\x*\x + 6*\x + 4)    +
         and(\x>-1, \x<=1) * (\x + 5 - pow(\x,3) - 5*\x*\x) / 4 +
