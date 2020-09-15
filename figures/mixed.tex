@@ -1,4 +1,4 @@
-\begin{tikzpicture}[scale=0.8,
+\begin{tikzpicture}[scale=0.48,
       declare function={
         objective(\x)=      (\x<=-1) * (2*\x*\x + 6*\x + 4)    +
         and(\x>-1, \x<=1) * (\x + 5 - pow(\x,3) - 5*\x*\x) / 4 +
@@ -9,10 +9,10 @@
     \begin{axis}[
       axis x line=none, axis y line=none,
       ymin=-4, ymax=5, ytick={-5,...,5}, ylabel=$y$,
-      xmin=-4, xmax=7, xtick={-5,...,7}, xlabel=$x$,
+      xmin=-5, xmax=7, xtick={-5,...,7}, xlabel=$x$,
     ]
-    \addplot[domain=-4:7, samples=100, objective]{objective(x)};
-    \addplot[domain=-4:7, samples=200, oracle]{oracle1(x)};
+    \addplot[domain=-5:7, samples=100, objective]{objective(x)};
+    \addplot[domain=-5:7, samples=200, oracle]{oracle1(x)};
     
     %% point labels
     \node[label={90:$\wopt$},circle,fill,inner sep=2pt] at (axis cs:2.5,-2.25) {};

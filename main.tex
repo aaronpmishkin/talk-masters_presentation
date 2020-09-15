@@ -104,8 +104,18 @@
             \includegraphics[width=0.45\textwidth]{collaborators/helmet2} 
        \end{figure} 
     \end{frame}
-   
-    \begin{frame}{Goal}
+  
+    \setbeamercolor{background canvas}{bg=lightcyan}
+
+    \begin{frame}
+       \begin{center}
+           \Huge Chapter 1: Introduction
+       \end{center} 
+    \end{frame}
+
+    \setbeamercolor{background canvas}{bg=white}
+
+    \begin{frame}{Chapter 1: Goal}
         \Large 
         
         \textbf{Premise}: modern neural networks are extremely flexible and can exactly fit many training datasets. 
@@ -119,41 +129,7 @@
         
     \end{frame}
 
-    \begin{frame}{Talk Roadmap}
-        \textbf{Part 1: Interpolation}
-        \begin{itemize}
-            \item Assumptions and oracle model of stochastic optimization.
-            \item Formal definitions of interpolation.
-        \end{itemize}
-
-        \vspace{2ex}
-        
-        \textbf{Part 2: Growth Conditions}
-        \begin{itemize}
-            \item The strong and weak growth conditions. 
-            \item Connections between interpolation and strong/weak growth.
-        \end{itemize}
-        
-        \vspace{2ex}
-
-        \textbf{Part 3: Stochastic Gradient Descent}
-        \begin{itemize}
-            \item Fast convergence of SGD under interpolation. 
-            \item Parameter-free SGD using the Armijo line-search.
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}{Motivation: Model Fitting in ML}
-       
-       \begin{figure}
-            \centering
-            \includegraphics[width=0.98\textwidth]{figures/workflow} 
-       \end{figure} 
-
-       \source{https://towardsdatascience.com/challenges-deploying-machine-learning-models-to-production-ded3f9009cb3}
-    \end{frame}
-
-    \begin{frame}{Motivation: Model Fitting in ML}
+    \begin{frame}{Chapter 1: Model Fitting in ML}
        
        \begin{figure}
             \centering
@@ -163,7 +139,7 @@
        \source{https://towardsdatascience.com/challenges-deploying-machine-learning-models-to-production-ded3f9009cb3}
     \end{frame}
     
-    \begin{frame}{Motivation: Stochastic Gradient Descent}
+    \begin{frame}{Chapter 1: Stochastic Gradient Descent}
 
         \begin{center}
             \Large
@@ -173,7 +149,7 @@
 
     \end{frame}
 
-    \begin{frame}{Motivation: Consensus Says\ldots}
+    \begin{frame}{Chapter 1: Consensus Says\ldots}
 
         \begin{center}
             \Large \dots and also~\citet{xu2017second,
@@ -195,7 +171,7 @@
 
     \end{frame}
 
-    \begin{frame}{Motivation: Challenges in Optimization for ML}
+    \begin{frame}{Chapter 1: Challenges in Optimization for ML}
 
         \textbf{Stochastic gradient methods} are the most popular algorithms for fitting ML models,
         \begin{align*}
@@ -215,7 +191,7 @@
     \end{frame}
 
 
-    \begin{frame}{Motivation: Challenges in Optimization for ML}
+    \begin{frame}{Chapter 1: Challenges in Optimization for ML}
 
         \textbf{Stochastic gradient methods} are the most popular algorithms for fitting ML models,
         \begin{align*}
@@ -234,33 +210,8 @@
 
     \end{frame}
 
-    \begin{frame}{Motivation: Trends on CIFAR-10} 
-        \begin{center}
-            \Large Test Accuracy: \textbf{CIFAR-10}
-        \end{center}
 
-        \begin{figure}[]
-            \centering
-            \includegraphics[width=\linewidth]{figures/Cifar10}
-        \end{figure} 
-
-        \source{https://paperswithcode.com/sota/image-classification-on-cifar-10}
-    \end{frame}
-
-    \begin{frame}{Motivation: Trends on ImageNet} 
-        \begin{center}
-            \Large Test Accuracy: \textbf{ImageNet}
-        \end{center}
-
-        \begin{figure}[]
-            \centering
-            \includegraphics[width=\linewidth]{figures/ImageNet}
-        \end{figure} 
-
-        \source{https://paperswithcode.com/sota/image-classification-on-imagenet}
-    \end{frame}
-
-    \begin{frame}{Motivation: Better Optimization via Better Models}
+    \begin{frame}{Chapter 1: Better Optimization via Better Models}
 
         \begin{figure}
             \centering
@@ -271,8 +222,12 @@
         \vspace{0.2em}
 
         \begin{center}
-            \large \textbf{Idea}: exploit ``over-parameterization'' for better optimization.\vspace{0.25em}
+            \large \textbf{Idea}: exploit ``over-parameterization'' for better optimization.
         \end{center}
+        \begin{itemize}
+            \item Intuitively, gradient noise goes to $0$ if all data are fit exactly.
+            \item No need for decreasing step-sizes, or averaging for convergence. 
+        \end{itemize}
 
     \end{frame}
 
@@ -282,20 +237,21 @@
 
     \begin{frame}
        \begin{center}
-          \huge Part 1: Interpolation 
+          \huge Chapter 2: Interpolation and Growth Conditions 
        \end{center} 
     \end{frame}
 
     \setbeamercolor{background canvas}{bg=white}
 
-    \begin{frame}{Interpolation: Assumptions}
+    \begin{frame}{Chapter 2: Assumptions}
         \begin{center}
-            \Large 
-            \textbf{Goal}: Minimize \( f : \R^d \into \R\), where 
+            We need assumptions to analyze the complexity of SGD. 
         \end{center}
        
-        \vspace{3ex}
-        
+        \vspace{1.5ex}
+
+        \textbf{Goal}: Minimize \( f : \R^d \rightarrow \R \), where
+        \vspace{0.5ex}
         \begin{itemize}
             \item \( f \) is \textbf{lower-bounded}: \( \exists \, \wopt \in \R^d \) such that
                 \begin{align*}
@@ -315,9 +271,9 @@
      
     \end{frame}
 
-    \begin{frame}{Interpolation: Stochastic First-Order Oracles}
+    \begin{frame}{Chapter 2: Stochastic First-Order Oracles}
 
-        \textbf{Classic}:
+        \textbf{Stochastic Oracles}:
         \begin{enumerate}
             \item At each iteration \( k \), query oracle \oracle{} for stochastic estimates 
                 \[ f(\wk, \zk) \quad \text{and} \quad \grad(\wk, \zk). \] 
@@ -325,10 +281,6 @@
                 \vspace{1ex}
             \item \textcolor{red}{\oracle{} is \textbf{unbiased}}, meaning 
             \[ \Ek\sbr{f(\wk, \zk)} = f(\wk) \quad \text{and} \quad \Ek\sbr{\grad(\wk, \zk)} = \grad(\wk). \]% 
-        \end{enumerate}%
-        \pause%
-        \textbf{New}:
-        \begin{enumerate}
             \item \textcolor{blue}{\oracle{} is \textbf{individually-smooth}}, meaning \( f(\cdot, \zk) \) is \( \Lmax \)-smooth, 
                 \begin{align*}
                     \norm{\grad(\w, \zk) - \grad(u, \zk)}_2 &\leq \Lmax \norm{\w - u}_2 \tag*{\(\forall \w, u \in \R^d \),} 
@@ -336,81 +288,44 @@
                 almost surely.
         \end{enumerate}
 
-    \begin{textblock}{2.5}(0.3,11)
-        \includegraphics[width=0.4\textwidth]{collaborators/sharan}<2->
-
-        \vspace{0.5ex}
-
-        \includegraphics[width=0.4\textwidth]{collaborators/fred}<2->
-    \end{textblock}
-
     \end{frame}
 
-    \begin{frame}{Interpolation: SFOs and Least Squares}
-        \vspace{-1ex}
+    \begin{frame}{Chapter 2: Defining Interpolation}
+        \begin{minipage}{0.72\textwidth}
+        \vspace{-5.25ex}
+            \begin{restatable}[Interpolation: Minimizers]{definition}{interpolationMinima}\label{def:interpolation-minima}
+                \( (f, \oracle{}) \) satisfies minimizer interpolation if 
+                \[ \w' \in \argmin f \implies \w' \in \argmin f(\cdot, \zk) \; \text{a.s.}  \]
+            \end{restatable}%
+            \vspace{-1ex}
+            \begin{restatable}[Interpolation: Stationary Points]{definition}{interpolationGradients}\label{def:interpolation-gradients}
+                \( (f, \oracle{}) \) satisfies stationary-point interpolation if 
+                \[ \grad(\w') = 0 \implies \grad(\w', \zk) \equas 0. \]
+            \end{restatable}%
+            \vspace{-1ex}
+            \begin{restatable}[Interpolation: Mixed]{definition}{interpolationMixed}\label{def:interpolation-mixed}
+                \( (f, \oracle{}) \) satisfies mixed interpolation if 
+                \[ \w' \in \argmin f \implies \grad(\w', \zk) \equas 0. \]
+            \end{restatable}
+        \end{minipage} 
+        \begin{minipage}{0.25\textwidth}
+            \centering
+            \input{figures/minimizer} 
 
-        \[ \textbf{Least Squares}: \wopt \in \argmin \frac{1}{2n} \sum_{i=1}^n \rbr{\abr{w, x_i} - y_i}^2. \]
-        
-        \vspace{2ex} 
-        
-        The \textbf{sub-sampling} oracle sets \( \zk \sim \text{Uniform}(1, \ldots, n) \) and returns 
-        \[ f(\w, \zk) =  \half \rbr{\abr{w, x_i} - y_i}^2 \quad \text{and} \quad \grad(\wk, \zk) = \rbr{\abr{\w, x_i} - y_i} x_i. \]
+            \input{figures/stationary_point}
 
-        \pause 
-        \rule{\textwidth}{0.4pt}
-        Observations: 
+            \input{figures/mixed}
+        \end{minipage}
+    \end{frame}
+
+    \begin{frame}{Chapter 2: Interpolation Relationships}
+
         \begin{itemize}
-            \item \textcolor{red}{\oracle{} is \textbf{unbiased}.} 
-            \item \textcolor{blue}{\oracle{} is \( \Lmax = \max_{i} \norm{x_i}^2_2 \) \textbf{individually-smooth}} since 
-                    \[ f_{i}(\w) = \half \rbr{\abr{w, x_{i}} - y_{i}}^2, \]
-                    is \( \norm{x_{i}}_2^2 \)-smooth for each \( i \in [n] \).
+            \item All three definitions occur in the literature without distinction!
+            \item We formally define them and characterize their relationships. 
         \end{itemize}
 
-    \end{frame}
-        
-
-
-    \begin{frame}{Interpolation: Minimizer}
-        \begin{figure}
-            \centering 
-            \input{figures/minimizer} 
-        \end{figure}
-        
-        \begin{restatable}[Interpolation: Minimizers]{definition}{interpolationMinima}\label{def:interpolation-minima}
-            The pair \( (f, \oracle{}) \) satisfies minimizer interpolation if for all \( \z \in \calZ \),
-            \[ f(\w') \leq f(\w) \; \forall \w \in \R^d \implies f(\w', \z) \leq f(\w, \z) \; \forall \w \in \R^d.  \]
-        \end{restatable}
-
-    \end{frame}
-
-
-    \begin{frame}{Interpolation: Stationary-Point}
-        \begin{figure}
-           \centering 
-            \input{figures/stationary_point} 
-        \end{figure}
-        
-        \begin{restatable}[Interpolation: Stationary Points]{definition}{interpolationGradients}\label{def:interpolation-gradients}
-            The pair \( (f, \oracle{}) \) satisfies stationary-point interpolation if for all \( \z \in \calZ \),
-            \[ \grad(\w') = 0 \implies \grad(\w', \z) = 0. \]
-        \end{restatable}
-
-    \end{frame}
-
-    \begin{frame}{Interpolation: Mixed}
-        \begin{figure}
-           \centering 
-            \input{figures/mixed} 
-        \end{figure}
-
-        \begin{restatable}[Interpolation: Mixed]{definition}{interpolationMixed}\label{def:interpolation-mixed}
-            The pair \( (f, \oracle{}) \) satisfies mixed interpolation if for all \( \z \in \calZ \),
-            \[ f(\w') \leq f(\w) \; \forall \w \in \R^d \implies \grad(\w', \z) = 0. \]
-        \end{restatable}
-
-    \end{frame}
-
-    \begin{frame}{Interpolation: Relationships}
+        \pause
 
         \begin{restatable}[Interpolation Relationships]{lemma}{interpRelationships}
             Let \( \rbr{f, \oracle{}} \) be arbitrary. 
@@ -422,42 +337,32 @@
             \end{align*}
             However, if \( f \) and \( f(\cdot, \zk) \) are invex (almost surely) for all \( k \), then the three definitions are equivalent. 
         \end{restatable}
+
+        Note: invexity is weaker than convexity and implied by it. 
         
     \end{frame}
-  
-    %% growth conditions
+   
+    \begin{frame}{Chapter 2: Using Interpolation }
+       There are two obvious ways that we can leverage interpolation: 
 
-    \setbeamercolor{background canvas}{bg=lightcyan}
+       \vspace{2ex}
 
-    \begin{frame}
-       \begin{center}
-          \huge Pause 
-       \end{center} 
-    \end{frame}
-
-
-    \begin{frame}
-       \begin{center}
-          \huge Part 2: Growth Conditions 
-       \end{center} 
-    \end{frame}
-
-    \setbeamercolor{background canvas}{bg=white}
-    
-    \begin{frame}{Growth Conditions: Iteration Complexity}
-        \Large 
-        
-        \textbf{Question}: for how many iterations do we need to run SGD to obain 
-        \[ \E\sbr{f(\wk) - f(\wopt)} \leq \epsilon \] 
-        if minimizer interpolation holds?
-
-       \vspace{4ex}
-       \pause 
-       \textbf{Two Approaches}: 
        \begin{enumerate}
-           \item Use interpolation in a direct analysis of SGD. 
-           \item Relate interpolation to ``nice'' properties of \( \oracle{} \). 
+           \item Relate interpolation to \textbf{global behavior} of \( \oracle{} \). 
+               \vspace{1ex}
+               \begin{itemize}
+                   \item This was first done using the weak and strong growth conditions by \citet{vaswani2019fast}. 
+                \vspace{2ex}
+               \end{itemize}
+           \item Use interpolation in a \textbf{direct analysis} of SGD. 
+               \vspace{1ex}
+               \begin{itemize}
+                   \item This was first done by \citet{bassily2018exponential}, who analyzed SGD under a curvature condition. 
+               \end{itemize}
+               \vspace{2ex}
        \end{enumerate}
+
+      We do both, starting with weak/strong growth. 
 
     \end{frame}
 
@@ -466,14 +371,14 @@
         \mbox{\large There are many possible regularity assumptions on \oracle{}.} 
 
         \begin{align*} 
-            \textbf{Bounded Gradients}:& \quad  \E\sbr{\norm{\grad(\w, \zk)}} \leq \textcolor{red}{\sigma^2}, \\ 
+            \textbf{Bounded Gradients}:& \quad  \E\sbr{\norm{\grad(\w, \zk)}^2} \leq \textcolor{red}{\sigma^2}, \\ 
            \intertext{\hspace{3.5em} \small\textbullet{} Proposed by Robbins and Monro in their analysis of SGD. }
            \pause
            \textbf{Bounded Variance}:& \quad \E \sbr{\norm{\grad(\w, \zk)}^2} \leq \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}, \\
            \intertext{\hspace{3.5em} \small \textbullet{} Commonly used in the stochastic approximation setting.}
            \pause
-           \textbf{Strong Growth+Noise}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}.
-           \intertext{\hspace{3.5em} \small \textbullet{} Satisfied when \oracle{} is individually-smooth. }
+           \textbf{Strong Growth+Noise}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}^2} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}.
+           \intertext{\hspace{3.5em} \small \textbullet{} Satisfied when \oracle{} is individually-smooth and bounded below. }
        \end{align*} 
 
     \end{frame}
@@ -483,13 +388,13 @@
         \mbox{\large We obtain the strong and weak growth conditions as follows: } 
 
         \begin{align*} 
-            \textbf{Strong Growth+Noise}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}. \\
+            \textbf{Strong Growth+Noise}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}^2} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2} + \textcolor{red}{\sigma^2}. \\
            \intertext{\hspace{3.5em} \small \textbullet{} Does not imply interpolation. }
            \pause
-            \textbf{Strong Growth}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2}.\\
+            \textbf{Strong Growth}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}^2} \leq \rho \, \textcolor{blue}{\norm{\grad(\w)}^2}.\\
             \intertext{\hspace{3.5em} \small \textbullet{} Implies \textbf{stationary-point} interpolation. }
            \pause
-            \textbf{Weak Growth}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}} \leq \alpha \, \textcolor{purple}{\rbr{f(\w) - f(\wopt)}}. 
+            \textbf{Weak Growth}:& \quad  \E \sbr{\norm{\grad(\w, \zk)}^2} \leq \alpha \, \textcolor{purple}{\rbr{f(\w) - f(\wopt)}}. 
             \intertext{\hspace{3.5em} \small \textbullet{} Implies \textbf{mixed} interpolation. }
        \end{align*} 
 
@@ -521,14 +426,14 @@
             \begin{restatable}[Interpolation and Weak Growth]{lemma}{interpToWGC}~\label{lemma:interpolation-to-wgc}
                 Assume \( f \) is \( L \)-smooth and \oracle{} is \( \Lmax \) individually- smooth. 
                 If minimizer interpolation holds, then weak growth also holds with
-                \[ \wgc \leq \frac{L_{\text{max}}}{L}. \]
+                \( \wgc \leq \frac{L_{\text{max}}}{L}. \)
             \end{restatable}
            
 
             \begin{restatable}[Interpolation and Strong Growth]{lemma}{interpToSGC}~\label{lemma:interpolation-to-sgc}
                 Assume \( f \) is \( L \)-smooth and \( \mu \) strongly-convex and \oracle{} is \( \Lmax \) individually-smooth. 
                 If minimizer interpolation holds, then strong growth also holds with 
-                \[ \rho \leq \frac{L_{\text{max}}}{\mu}. \]
+                \( \rho \leq \frac{L_{\text{max}}}{\mu}. \)
             \end{restatable}
         \end{minipage}
         \begin{minipage}[t]{0.15\textwidth}
@@ -543,74 +448,103 @@
         \end{minipage}
         
     \end{center}
+    \textbf{Comments}:
+    \begin{itemize}
+        \item This improve on the original result by \citet{vaswani2019fast}, which required convexity.
+        \item Oracle framework extends relationship beyond finite-sums. 
+        \item See thesis for additional results on weak/strong growth. 
+    \end{itemize}
+
     \end{frame}
 
     \setbeamercolor{background canvas}{bg=lightcyan}
 
     \begin{frame}
-        
        \begin{center}
-          \huge Pause 
-       \end{center} 
-    \end{frame}
-
-    %% stochastic gradient descent (sgd) 
-    
-    \begin{frame}
-       \begin{center}
-          \huge Part 3: Stochastic Gradient Descent\\
+          \huge Chapter 3: Stochastic Gradient Descent\\
        \end{center} 
     \end{frame}
     
     \setbeamercolor{background canvas}{bg=white} 
 
-    \begin{frame}{SGD:\ Core Problems}
-        \large 
-        \begin{align*}
-         \textbf{SGD:} \quad w_{k + 1} = w_k - \eta \nabla f(\wk, \zk). \\
-        \end{align*}
-        
-        \mbox{\Large \textbf{Complaints}:} 
+    \begin{frame}{Chapter 3: Fixed Step-size SGD}
+       
+        \begin{figure}[t]
+        \begin{procedure}{Fixed Step-Size SGD}
+        \item Choose an initial point \( \w_0 \in \R^d \).
+            \vspace{2ex}
+        \item For each iteration \( k \geq 0 \):
+            \begin{enumerate}
+                \item Query \oracle{} for \( \grad(\wk, \zk) \).
+                    \vspace{1ex}
+                \item Update input as\vspace{-1ex}%
+                    \[ \wkk = \wk - \eta \grad(\wk, \zk). \]
+            \end{enumerate}
+        \end{procedure}
+        \end{figure}
 
-        \vspace{1ex}
-        \begin{itemize}
-            \item \textcolor{red}{Slow}: \( O(\epsilon^{-4}) \) for stationary points. 
-                \vspace{0.5ex}
-                \begin{itemize}
-                    \item Many works have shown \( O(\epsilon^{-2}) \) under interpolation. 
-                    \item \citet{vaswani2019fast, bassily2018exponential, cevher2018linear}
-                \end{itemize}
-                \vspace{1ex}
-            \item \textcolor{red}{Unstable}: diverges if \( \eta > \frac{2}{L} \). 
-                \vspace{0.5ex}
-                \begin{itemize}
-                    \item Is grid-search really the best that we can do? 
-                \end{itemize} 
-        \end{itemize}
-        \vspace{1em}
-
-        \begin{textblock}{2.5}(13.5, 7.8)
-            \centering
-            \includegraphics[width=0.4\textwidth]{collaborators/sharan}
-            \includegraphics[width=0.4\textwidth]{collaborators/francis}
-
-            \vspace{0.5ex}
-
-            \includegraphics[width=0.4\textwidth]{collaborators/mark}
-        \end{textblock}
 
     \end{frame}
-       
-\begin{frame}{SGD:\ the Armijo Line-search}
+
+    \begin{frame}{Chapter 3: Fixed Step-size SGD}
+        
+        Prior work for SGD under growth conditions or interpolation: 
+        \begin{itemize}
+            \item Convergence under strong growth \citep{schmidt2013fast, cevher2018linear}.
+            \item Convergence under weak growth \citep{vaswani2019fast}.
+            \item Convergence under interpolation \citep{bassily2018exponential}. 
+        \end{itemize}
+        \vspace{2ex}
+
+       \pause
+       \rule{\textwidth}{0.5px}
+       \vspace{1ex}
+
+       We still provide many new and improved results! 
+       \begin{itemize}
+           \item \textbf{Bigger} step-sizes and \textbf{faster} rates for convex and strongly-convex objectives. 
+           \item \textbf{Almost-sure} convergence under weak/strong growth. 
+           \item \textbf{Trade-offs} between growth conditions and interpolation. 
+       \end{itemize}
+    \end{frame}
+
+
+    \setbeamercolor{background canvas}{bg=lightcyan}
+
+    \begin{frame}
+       \begin{center}
+          \huge Chapter 4: Line Search\\
+       \end{center} 
+    \end{frame}
+
+    \setbeamercolor{background canvas}{bg=white} 
+   
+    \begin{frame}{Chapter 4: Weakness of Fixed Step-size SGD}
+       \begin{center}
+           \Large
+           \textbf{Problem}: these convergence rates for fixed step-size SGD rely on using the optimal step-size, which depends on \( \Lmax \), \( \alpha \), or \( \rho \). \\
+
+            \vspace{3ex}
+            Is \textbf{grid-search} really the best way to pick \( \eta \)?
+       \end{center} 
+      
+    \begin{figure}[]
+        \centering
+        \includegraphics[width=\linewidth]{figures/grid_search}
+    \end{figure}
+
+    \end{frame}
+
+    \begin{frame}{SGD:\ the Armijo Line-search}
        
         The \textbf{Armijo line-search} is a classic solution to step-size selection.
 
-        \[ f(\wk - \etak \grad(\wk)) \leq f(\wk) - c\cdot \etak \norm{\grad(\wk)}^2. \]
+        \[ f(\underbrace{\wk - \etak \grad(\wk)}_{\wkk}) \leq f(\wk) - c\cdot \etak \norm{\grad(\wk)}^2. \]
         \vspace{1.2ex}
 
         \begin{figure}[]
             \centering
-            \input{figures/step_size_bound}
+            \input{figures/armijo}
         \end{figure} 
     \end{frame}
 
@@ -620,17 +554,19 @@
         \begin{figure}[t]
             \begin{procedure}{SGD with Armijo Line-Search}
             \item Choose an initial point \( \w_0 \in \R^d \).
-                \vspace{2ex}
+                \vspace{1ex}
             \item For each iteration \( k \):
                 \begin{enumerate}
                     \item Query \oracle{} for \( f(\wk, \zk), \: \grad(\wk, \zk) \). 
-                        \vspace{1ex}
-                    \item Set \( \etak =  \etamax \), and \[ \wkk \gets \wk - \etak \grad(\wk, \zk). \]
-                    \item Backtrack until
+                        \vspace{0.5ex}
+                    \item Set \( \etak = \infty \), and \[ \wkk \gets \wk - \etak \grad(\wk, \zk). \]
+                    \item Exactly backtrack until
                         \[  \hspace{-1em} f(\wkk, \zk) \leq f(\wk, \zk) - c \cdot \etak \norm{\grad(\wk, \zk)}^2. \]
                 \end{enumerate}
             \end{procedure}
         \end{figure}
+
+        Note: Evaluates Armijo condition on \( f(\cdot, \zk) \) instead of \( f \) and needs direct access to \( f(\cdot, \zk) \) to backtrack. 
 
     \end{frame}
 
@@ -650,8 +586,15 @@
                 Assume minimizer interpolation holds.\\
 
                 Then the \textbf{maximal} step-size satisfying the stochastic Armijo condition satisfies the following: 
-                \[ \frac{2 (1-c)}{\Lmax} \leq \etak \leq \frac{f(\wk, \zk) - f(\wopt, \zk)}{c \norm{\grad(\wk, \zk)}^2}. \]
+                \[ \frac{2 (1-c)}{\Lmax} \leq \etamax \leq \frac{f(\wk, \zk) - f(\wopt, \zk)}{c \norm{\grad(\wk, \zk)}^2}. \]
             \end{restatable}
+            
+            \textbf{Comments}:
+            \begin{itemize}
+                \item Mirrors classic result in deterministic optimization.  
+                \item Easy to relax to a backtracking line-search.
+            \end{itemize}
+
        \end{minipage} 
        \begin{minipage}[t]{0.15\textwidth}
             \begin{figure}[t]
@@ -671,10 +614,13 @@
                 \includegraphics[width=0.8\textwidth]{collaborators/simon}
             \end{figure} 
        \end{minipage}
+
     \end{frame}
 
     \begin{frame}{SGD with Armijo Line-Search: Lemma Geometry}
-        \[  \frac{2 (1-c)}{\Lmax} \leq \etak \leq \frac{f(\wk, \zk) - f(\wopt, \zk)}{c \norm{\grad(\wk, \zk)}^2}. \] 
+        \Large
+
+        \[  \frac{2 (1-c)}{\Lmax} \leq \etamax \leq \frac{f(\wk, \zk) - f(\wopt, \zk)}{c \norm{\grad(\wk, \zk)}^2}. \] 
 
         \vspace{1ex} 
 
@@ -686,60 +632,61 @@
     \end{frame}
 
     \begin{frame}{SGD with Armijo Line-search: Convergence}
-        \vspace{-2ex}
-        \begin{minipage}[t]{0.82\textwidth}
-            \vspace{-1.45ex} 
-            \begin{restatable}[Convex + Interpolation]{theorem}{convexLineSearch}~\label{thm:convex-line-search}
-                Assume \( f \) is convex, \( L \)-smooth and \( \oracle{} \) is \( \Lmax \) individually-smooth.
-                Assume minimizer interpolation holds and \( \f(\cdot, \zk) \) is almost-surely convex for all \( k \).\\
-
-                Then SGD with the Armijo line-search and \( c = \half \) converges as 
-                \begin{align*}
-                    \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.
-                \end{align*} 
-            \end{restatable}
-        \end{minipage}
-        \begin{minipage}[t]{0.15\textwidth}
-            \begin{figure}
-                    \centering
-                    \includegraphics[width=0.8\textwidth]{collaborators/sharan}
-
-                    \vspace{0.5ex}
-
-                    \includegraphics[width=0.8\textwidth]{collaborators/fred}
-            \end{figure}
-        \end{minipage}
-    \end{frame}
-
-    \begin{frame}{SGD with Armijo Line-search: Comments}
-        \vspace{-2ex}
-        \begin{align*}
-            \textbf{Constant Step-size}: \quad \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.
-            \intertext{\hspace{13em} \Large v.s.}
-            \textbf{Armijo Line-search}: \quad \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.\\
-        \end{align*}
-
+        \begin{restatable}[Convex + Interpolation]{theorem}{convexLineSearch}~\label{thm:convex-line-search}
+            Assume \( f \) is convex, \( L \)-smooth and \( \oracle{} \) is \( \Lmax \) individually-smooth.
+            Assume minimizer interpolation holds and \( \f(\cdot, \zk) \) is almost-surely convex for all \( k \).
+            Then SGD with the Armijo line-search and \( c = \half \) converges as 
+            \begin{align*}
+                \E\sbr{f(\bar \w_K)} - f(\wopt) &\leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.
+            \end{align*} 
+        \end{restatable}
+        
         \textbf{Comments}:
         \begin{itemize}
-            \item SGD with the Armijo line-search is just as fast as SGD with the best constant step-size (under interpolation)! 
-            \item SGD with the Armijo line-search is (nearly) parameter-free and recovers the deterministic rate when \( \Lmax = L \). 
+            \item Improves constants in original result \citep{vaswani2019painless} ---
+            line-search is just as fast as the best constant step-size! 
+            \item Using the Armijo line-search is (nearly) parameter-free and recovers the deterministic rate when \( \Lmax = L \). 
+            \item See thesis for strongly-convex rate (improves \( \bar \mu \) to \( \mu \)). 
         \end{itemize}
+
     \end{frame}
 
 
     \setbeamercolor{background canvas}{bg=lightcyan}
+
     \begin{frame}
-        \begin{center}
-        \huge Pause
-        \end{center}
+       \begin{center}
+          \huge Chapter 5: Acceleration \\
+       \end{center} 
     \end{frame}
-   
+    
+
     \setbeamercolor{background canvas}{bg=white}
 
+
+    \begin{frame}{Chapters 5 and 6: Acceleration}
+
+       SGD can be accelerated when minimizer interpolation holds:
+       \begin{itemize}
+           \item \citet{liu2020accelerating} modify Nesterov's method and analyze convergence for strongly-convex functions. 
+      \vspace{1ex}
+           \item \citet{vaswani2019fast} analyze Nesterov's method under strong growth for strongly-convex and convex functions. 
+       \end{itemize}
+
+      \vspace{2ex}
+      We follow \citet{vaswani2019fast}, but provide tighter rates. 
+      \begin{itemize}
+          \item Improves dependence on the strong-growth parameter from \( \rho \) to \( \sqrt{\rho} \) --- factor of \( \sqrt{\Lmax / \mu} \) in the worst case. 
+        \vspace{1ex}
+          \item Analysis proceeds via estimating sequences; details in thesis.  
+      \end{itemize}
+        
+    \end{frame}
+
     \begin{frame}{Recap}
-       \Large 
        \begin{center}
-         \Huge Takeaways.
+         \vspace{-2ex}
+         \Large Takeaways.
 
          \vspace{-1ex}
          \rule{0.66\textwidth}{1px}
@@ -747,13 +694,15 @@
        \end{center}
 
         \begin{itemize}
-            \item \textbf{Interpolation}: the oracle model is a natural framework for interpolation in optimization. 
-
-                \vspace{2ex}
+            \item \textbf{Interpolation}: the oracle model is extends interpolation to general stochastic optimization problems. 
+                \vspace{1ex}
             \item \textbf{Growth Conditions}: ``smooth'' oracles satisfying interpolation are well-behaved globally. 
-
-                \vspace{2ex}
-            \item \textbf{SGD}: line-search methods lead to fast, parameter-free optimization under interpolation. 
+                \vspace{1ex}
+            \item \textbf{SGD}: improved rates show SGD under interpolation is tight with the deterministic case. 
+                \vspace{1ex}
+            \item \textbf{Line-Search}: the Armijo line-search yields fast, parameter-free optimization under interpolation.  
+                \vspace{1ex}
+            \item \textbf{Acceleration}: stochastic acceleration is possible with a penalty of only \( \sqrt{\rho} \). 
         \end{itemize}
     \end{frame}
     
@@ -794,28 +743,30 @@
     
         \end{frame}
 
-    \begin{frame}{(Bonus) Fixed Step-size SGD}
-       
-        \begin{figure}[t]
-        \begin{procedure}{Stochastic Gradient Descent}
-        \item Choose an initial point \( \w_0 \in \R^d \).
-            \vspace{2ex}
-        \item For each iteration \( k \geq 0 \):
-            \begin{enumerate}
-                \item Query \oracle{} for \( \grad(\wk, \zk) \).
-                    \vspace{1ex}
-                \item Update input as\vspace{-1ex}%
-                    \[ \wkk = \wk - \eta \grad(\wk, \zk). \]
-            \end{enumerate}
-        \end{procedure}
-        \end{figure}
+        \begin{frame}{Bonus: SFOs and Least Squares}
+        \vspace{-1ex}
+
+        \[ \textbf{Least Squares}: \wopt \in \argmin \frac{1}{2n} \sum_{i=1}^n \rbr{\abr{w, x_i} - y_i}^2. \]
+        
+        \vspace{2ex} 
+        
+        The \textbf{sub-sampling} oracle sets \( \zk \sim \text{Uniform}(1, \ldots, n) \) and returns 
+        \[ f(\w, \zk) =  \half \rbr{\abr{w, x_i} - y_i}^2 \quad \text{and} \quad \grad(\wk, \zk) = \rbr{\abr{\w, x_i} - y_i} x_i. \]
+
+        \pause 
+        \rule{\textwidth}{0.4pt}
+        Observations: 
+        \begin{itemize}
+            \item \textcolor{red}{\oracle{} is \textbf{unbiased}.} 
+            \item \textcolor{blue}{\oracle{} is \( \Lmax = \max_{i} \norm{x_i}^2_2 \) \textbf{individually-smooth}} since 
+                    \[ f_{i}(\w) = \half \rbr{\abr{w, x_{i}} - y_{i}}^2, \]
+                    is \( \norm{x_{i}}_2^2 \)-smooth for each \( i \in [n] \).
+        \end{itemize}
 
     \end{frame}
 
-    \begin{frame}{(Bonus) Fixed Step-size SGD:\ Convergence}
-        \vspace{-2ex}
-        \begin{minipage}[t]{0.82\textwidth}
-        \vspace{-1.45ex} 
+
+    \begin{frame}{Bonus: Convergence for Fixed Step-size SGD}
         \begin{restatable}[Convex + Weak Growth]{theorem}{wgcConvex}~\label{thm:wgc-convex}
             Assume \( f \) is convex, \( L \)-smooth and \( \rbr{f, \oracle{}} \) satisfies weak growth. 
             Then SGD with \( \eta = \frac{1}{2 \wgc L} \) converges as
@@ -828,21 +779,9 @@
             Then SGD with \( \eta = \frac{1}{\Lmax} \) converges as
             \[ \E\sbr{f(\bar w_K)} - f(\wopt) \leq \frac{\Lmax}{2 \, K} \norm{\w_0 - \wopt}^2.   \]
         \end{restatable}
-
-        \end{minipage} 
-        \begin{minipage}[t]{0.15\textwidth}
-            \begin{figure}[t]
-                \centering
-                \includegraphics[width=0.8\textwidth]{collaborators/sharan}
-
-                \vspace{0.5ex}
-
-                \includegraphics[width=0.8\textwidth]{collaborators/fred}
-            \end{figure} 
-        \end{minipage}
     \end{frame}
 
-    \begin{frame}{(Bonus) Fixed Step-size SGD: Comments}
+    \begin{frame}{Bonus: Trade-offs}
        \vspace{-2ex}
        \begin{align*}
            \textbf{Weak Growth}:  \quad \E\sbr{\f(\bar \w_K)} - f(\wopt) &\leq \frac{2 \alpha L}{K} \norm{\w_0 - \wopt}^2.
