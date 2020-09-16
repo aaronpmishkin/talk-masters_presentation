@@ -19,7 +19,7 @@
     ]
 
     \addplot[name path=function, domain=-3.5:5.23, samples=100, objective, line width=2pt]{objective(x)};
-    \addplot[name path=upperBound, domain=-3.5:7, samples=100, oracle, line width=2pt]{upperBound(x)};
+    \addplot[name path=upperBound, domain=-3.5:7, samples=100, oracle, line width=2pt, color=gray]{upperBound(x)};
     \addplot[name path=lineSearch, ->, domain=1:5.3, samples=100, bound, line width=2pt]{lineSearch(x)};
     \addplot[name path=lineSearchEnd, domain=3.55:5.2, samples=20, opacity=0, line width=2pt]{lineSearch(x)};
 

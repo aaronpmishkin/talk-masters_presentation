@@ -120,7 +120,8 @@
         
         \textbf{Premise}: modern neural networks are extremely flexible and can exactly fit many training datasets. 
         \begin{itemize}
-            \item e.g. ResNet-34 on CIFAR-10. 
+            \item \large e.g. ResNet on CIFAR-10, SVHN, BERT on DBpedia etc.  
+            \item Empirically, optimization is ``faster than it should be''. 
         \end{itemize}        
 
         \vspace{4ex} 
@@ -252,21 +253,36 @@
 
         \textbf{Goal}: Minimize \( f : \R^d \rightarrow \R \), where
         \vspace{0.5ex}
+        \pause
         \begin{itemize}
             \item \( f \) is \textbf{lower-bounded}: \( \exists \, \wopt \in \R^d \) such that
                 \begin{align*}
                     f(\wopt) &\leq f(w) \hspace{1.7em} \tag*{\(\forall \w \in \R^d \), } 
                 \end{align*}
-
+                \vspace{-2ex}
+                \begin{itemize}
+                    \item Non-negative losses like squared-error and cross-entropy. 
+                \end{itemize}
+                \vspace{1ex}
+                \pause 
             \item \( f \) is L-\textbf{smooth}: \( \w \mapsto \grad(\w) \) is \( L \)-Lipschitz, 
                 \begin{align*}
                     \norm{\grad(\w) - \grad(u)}_2 &\leq L \norm{\w - u}_2 \tag*{\(\forall \w, u \in \R^d \),} 
                 \end{align*}
-
+                \vspace{-2ex}
+                \begin{itemize}
+                    \item Gradient for squared-error, cross-entropy is (sub) linear. 
+                \end{itemize}
+                \vspace{1ex}
+                \pause
             \item (Optional) \( f \) is \( \mu \)-\textbf{strongly-convex}: \( \exists \, \mu \geq 0 \) such that, 
                 \begin{align*}
                    f(u) \geq f(\w) + \abr{\grad(\w), u - \w} + \frac{\mu}{2} \norm{u - \w}^2_2 \tag*{\( \forall \w, u \in \R^d \).}
                 \end{align*}
+                \vspace{-2ex}
+                \begin{itemize}
+                    \item Squared-error if \( n \geq d \) and examples are linearly indep. 
+                \end{itemize}
         \end{itemize}
      
     \end{frame}
@@ -277,10 +293,14 @@
         \begin{enumerate}
             \item At each iteration \( k \), query oracle \oracle{} for stochastic estimates 
                 \[ f(\wk, \zk) \quad \text{and} \quad \grad(\wk, \zk). \] 
+                \pause
             \item \( f(\wk, \cdot) \) is a deterministic function of random variable \( \zk \). 
+                \pause
                 \vspace{1ex}
             \item \textcolor{red}{\oracle{} is \textbf{unbiased}}, meaning 
             \[ \Ek\sbr{f(\wk, \zk)} = f(\wk) \quad \text{and} \quad \Ek\sbr{\grad(\wk, \zk)} = \grad(\wk). \]% 
+            \pause%
+            \vspace{-2ex}
             \item \textcolor{blue}{\oracle{} is \textbf{individually-smooth}}, meaning \( f(\cdot, \zk) \) is \( \Lmax \)-smooth, 
                 \begin{align*}
                     \norm{\grad(\w, \zk) - \grad(u, \zk)}_2 &\leq \Lmax \norm{\w - u}_2 \tag*{\(\forall \w, u \in \R^d \),} 
@@ -321,6 +341,7 @@
     \begin{frame}{Chapter 2: Interpolation Relationships}
 
         \begin{itemize}
+            \item Not trivial in higher dimensions. 
             \item All three definitions occur in the literature without distinction!
             \item We formally define them and characterize their relationships. 
         \end{itemize}
@@ -450,7 +471,7 @@
     \end{center}
     \textbf{Comments}:
     \begin{itemize}
-        \item This improve on the original result by \citet{vaswani2019fast}, which required convexity.
+        \item This improves on the original result by \citet{vaswani2019fast}, which required convexity.
         \item Oracle framework extends relationship beyond finite-sums. 
         \item See thesis for additional results on weak/strong growth. 
     \end{itemize}
@@ -490,7 +511,7 @@
         
         Prior work for SGD under growth conditions or interpolation: 
         \begin{itemize}
-            \item Convergence under strong growth \citep{schmidt2013fast, cevher2018linear}.
+            \item Convergence under strong growth \citep{tseng1998incremental, solodov1998incremental, schmidt2013fast, cevher2018linear}.
             \item Convergence under weak growth \citep{vaswani2019fast}.
             \item Convergence under interpolation \citep{bassily2018exponential}. 
         \end{itemize}
@@ -500,7 +521,7 @@
        \rule{\textwidth}{0.5px}
        \vspace{1ex}
 
-       We still provide many new and improved results! 
+       We provide many new and improved results: 
        \begin{itemize}
            \item \textbf{Bigger} step-sizes and \textbf{faster} rates for convex and strongly-convex objectives. 
            \item \textbf{Almost-sure} convergence under weak/strong growth. 
@@ -559,8 +580,9 @@
                 \begin{enumerate}
                     \item Query \oracle{} for \( f(\wk, \zk), \: \grad(\wk, \zk) \). 
                         \vspace{0.5ex}
-                    \item Set \( \etak = \infty \), and \[ \wkk \gets \wk - \etak \grad(\wk, \zk). \]
-                    \item Exactly backtrack until
+                    \item Set  \( \wkk \gets \wk - \etak \grad(\wk, \zk). \)
+                        \vspace{0.5ex}
+                    \item Backtrack (decrease \( \etak \)) until
                         \[  \hspace{-1em} f(\wkk, \zk) \leq f(\wk, \zk) - c \cdot \etak \norm{\grad(\wk, \zk)}^2. \]
                 \end{enumerate}
             \end{procedure}
@@ -686,15 +708,12 @@
     \begin{frame}{Recap}
        \begin{center}
          \vspace{-2ex}
-         \Large Takeaways.
-
-         \vspace{-1ex}
-         \rule{0.66\textwidth}{1px}
+         \Large Takeaways
          \vspace{1ex}
        \end{center}
 
         \begin{itemize}
-            \item \textbf{Interpolation}: the oracle model is extends interpolation to general stochastic optimization problems. 
+            \item \textbf{Interpolation}: the oracle model extends interpolation to general stochastic optimization problems. 
                 \vspace{1ex}
             \item \textbf{Growth Conditions}: ``smooth'' oracles satisfying interpolation are well-behaved globally. 
                 \vspace{1ex}
